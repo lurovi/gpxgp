@@ -89,7 +89,7 @@ class DivisionOP(Operator):
         self.__w2 = nn.parameter.Parameter(torch.tensor([1.]))
 
     def __call__(self, *args, **kwargs):
-        return self.__w1 * args[0] / self.__w2 * args[1]
+        return (self.__w1 * args[0]) / (self.__w2 * args[1])
 
     def n_args(self):
         return 2

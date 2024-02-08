@@ -21,6 +21,9 @@ def set_seeds(seed):
     torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
     random.seed(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.use_deterministic_algorithms(True)
 
 
 def make_fit_fun_gp(x, y, opcodes, reduction='mean'):

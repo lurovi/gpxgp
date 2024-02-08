@@ -54,7 +54,7 @@ class ProgramEvaluator(nn.Module):
                 elif op == self._opcodes.DIVIDE:
                     op1 = stack.pop()
                     op2 = stack.pop()
-                    stack.append(self._div_w1 * op1 / self._div_w2 * op2)
+                    stack.append((self._div_w1 * op1) / (self._div_w2 * op2))
                 # elif op == self._opcodes.MOD:
                 #     op1 = stack.pop()
                 #     op2 = stack.pop()

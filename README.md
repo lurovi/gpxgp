@@ -15,13 +15,13 @@ Code runs with Python 3.8 on Ubuntu 20.04.
 To install the required libraries, enter the following command: 
 
 ```bash
-pip install -r requirements.txt 
+pip3 install -r requirements.txt 
 ```
 
 To run the code, enter the following command:
 
 ```bash
-python main.py --alg --dataset --save_dir --hyperparams_file --comp_budget --e_in_evo --e_after_evo --lr
+python3 main.py --alg --dataset --save_dir --hyperparams_file --comp_budget --e_in_evo --e_after_evo --lr
 ```
 
 where the inputs arguments stand for: 
@@ -37,6 +37,7 @@ where the inputs arguments stand for:
 that will return fitness results for the 150 runs performed and save them in the `save_dir` folder.
 
 The code to reproduce all the box-plot of the paper (for all of the datasets) is contained in the folder `analysis`, it is sufficient to run:
+
 ```bash
 python3 boxplot.py 
 ```

@@ -31,7 +31,7 @@ where the inputs arguments stand for:
 *  `--hyperparams_file` is the file containing hyperparameters for the training 
 *  `--comp_budget` is the total computational budget for the training
 *  `--e_in_evo` is the gradient-based optimization performed during the evolution
-*  `--e_in_evo` is the gradient-based optimization performed after the evolution
+*  `--e_after_evo` is the gradient-based optimization performed after the evolution
 *  `--lr` is the learning rate that governs the gradient-based optimizer algorithm
 
 that will return fitness results for the 150 runs performed and save them in the `save_dir` folder.

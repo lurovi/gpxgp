@@ -85,7 +85,7 @@ class LinearGP:
 
         for i in range(0, self._params['n_iter']):
 
-            pop = self._fit_iteration(fit, pop, fitness)
+            pop = self._fit_iteration(fit, pop, fitness, parallel)
             pop.append(best)
 
             if parallel:
@@ -108,7 +108,7 @@ class LinearGP:
 
         return best, fit_best
 
-    def _fit_iteration(self, fit, pop, fitness):
+    def _fit_iteration(self, fit, pop, fitness, parallel):
 
         selected = [self._tournament_selection(fitness, pop) for _ in range(0, self._params['pop_size'])]
         pairs = zip(selected, selected[1:] + [selected[0]])

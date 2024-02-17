@@ -30,8 +30,8 @@ class LearnableLinearGP(LinearGP, ABC):
 
         return pop
 
-    def fit(self, fit, verbose=False):
-        best, best_value = super().fit(fit, verbose)
+    def fit(self, fit, verbose=False, parallel=True):
+        best, best_value = super().fit(fit, verbose=verbose, parallel=parallel)
 
         optimizer = Adam(best.parameters(), lr=self._params['lr'])
         for i in range(self._params['epochs_after_evolution']):

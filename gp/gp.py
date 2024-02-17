@@ -69,7 +69,7 @@ class LinearGP:
         mutated_prg = [self._mutate_op(b) for b in x]
         return mutated_prg
 
-    def fit(self, fit, verbose=False):
+    def fit(self, fit, verbose=False, parallel=True):
 
         pop = [self._random_program() for _ in range(0, self._params['pop_size'])]  # 10
 
@@ -77,14 +77,21 @@ class LinearGP:
         fit_best = fit(best)
         pop.append(best)
 
-        pool = multiprocessing.Pool()
-        fitness = torch.Tensor(pool.map(fit, pop))
+        if parallel:
+            pool = multiprocessing.Pool()
+            fitness = torch.Tensor(pool.map(fit, pop))
+        else:
+            fitness = torch.Tensor(list(map(fit, pop)))
 
         for i in range(0, self._params['n_iter']):
 
             pop = self._fit_iteration(fit, pop, fitness)
             pop.append(best)
-            fitness = torch.Tensor(pool.map(fit, pop))
+
+            if parallel:
+                fitness = torch.Tensor(pool.map(fit, pop))
+            else:
+                fitness = torch.Tensor(list(map(fit, pop)))
 
             candidate_best = torch.argmin(fitness)
             if fitness[candidate_best] < fit_best:
@@ -94,6 +101,10 @@ class LinearGP:
 
             if verbose:
                 print(f'Best fitness at iteration {i}: {fit_best}')
+
+        if parallel:
+            pool.close()
+            pool.join()
 
         return best, fit_best
 

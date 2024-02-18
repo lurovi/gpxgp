@@ -34,7 +34,8 @@ def make_train_test_ds(name_ds: str, number_test: int) -> tuple[torch.Tensor, to
 
     return X_train, y_train, X_test, y_test
 
-def read_csv_data(folder_path: str, dataset_name: str, idx: int, scale_strategy: str = 'no') -> dict[str, tuple[torch.Tensor, torch.Tensor]]:
+
+def read_csv_data(folder_path: str, dataset_name: str, idx: int, scale_strategy: str = 'no') -> dict[str, tuple[np.ndarray, np.ndarray]]:
     if not folder_path.endswith('/'):
         raise AttributeError(f'Provided folder path does not end with /.')
     if scale_strategy not in ('no', 'standard', 'robust', 'minmax'):
@@ -56,7 +57,7 @@ def read_csv_data(folder_path: str, dataset_name: str, idx: int, scale_strategy:
         data_scaler = data_scaler.fit(X)
         X = data_scaler.transform(X)
 
-    result: dict[str, tuple[torch.Tensor, torch.Tensor]] = {'train': (torch.from_numpy(X), torch.from_numpy(y))}
+    result: dict[str, tuple[np.ndarray, np.ndarray]] = {'train': (X, y)}
     
     d = pd.read_csv(folder_path+dataset_name+'/'+'test'+str(idx)+'.csv')
     y = d['target'].to_numpy()
@@ -66,7 +67,15 @@ def read_csv_data(folder_path: str, dataset_name: str, idx: int, scale_strategy:
     if scale_strategy != 'no':
         X = data_scaler.transform(X)
 
-    result['test'] = (torch.from_numpy(X), torch.from_numpy(y))
+    result['test'] = (X, y)
     
     return result
+
+
+def from_numpy_to_torch_tensor(data: tuple[np.ndarray, ...]) -> tuple[torch.Tensor, ...]:
+    return tuple([torch.from_numpy(d) for d in data])
+
+
+def from_torch_tensor_to_numpy(data: tuple[torch.Tensor, ...]) -> tuple[np.ndarray, ...]:
+    return tuple([d.detach().cpu().numpy() for d in data])
 

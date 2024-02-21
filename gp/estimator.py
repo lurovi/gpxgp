@@ -18,7 +18,6 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
     def __init__(self,
                  mode: str = 'gp',
                  pop_size: int = 100,
-                 n_iter: int = 100,
                  dim_prg: int = 10,
                  max_dim_prg: int = 10,
                  enum_set: str = 'PLUS MINUS TIMES DIVIDE',
@@ -42,7 +41,6 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
 
         self.mode: str = mode
         self.pop_size: int = pop_size
-        self.n_iter: int = n_iter
         self.dim_prg: int = dim_prg
         self.max_dim_prg: int = max_dim_prg
         self.enum_set: str = enum_set
@@ -70,7 +68,6 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
 
         d['mode'] = self.mode
         d['pop_size'] = self.pop_size
-        d['n_iter'] = self.n_iter
         d['dim_prg'] = self.dim_prg
         d['max_dim_prg'] = self.max_dim_prg
         d['enum_set'] = self.enum_set
@@ -183,8 +180,8 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
         if self.linear_scaling:
             p: np.ndarray = self.__apply_program(X, n_records)
             curr_slope, curr_intercept = compute_linear_scaling(y.detach().cpu().numpy(), p)
-            self.slope_ = np.core.umath.clip(curr_slope, -1e+10, 1e+10)
-            self.intercept_ = np.core.umath.clip(curr_intercept, -1e+10, 1e+10)
+            self.slope_ = np.core.umath.clip(curr_slope, -1e+12, 1e+12)
+            self.intercept_ = np.core.umath.clip(curr_intercept, -1e+12, 1e+12)
 
         return self
 
@@ -212,9 +209,9 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
         with torch.no_grad():
             if self.mode == 'gp':
                 pg_eval: ProgramEvaluator = ProgramEvaluator(self.opcodes_)
-                p: np.ndarray = np.core.umath.clip(pg_eval(x_list, self.best_prg_).detach().cpu().numpy(), -1e+10, 1e+10)
+                p: np.ndarray = np.core.umath.clip(pg_eval(x_list, self.best_prg_).detach().cpu().numpy(), -1e+12, 1e+12)
             else:
-                p: np.ndarray = np.core.umath.clip(self.best_prg_(x_list).detach().cpu().numpy(), -1e+10, 1e+10)
+                p: np.ndarray = np.core.umath.clip(self.best_prg_(x_list).detach().cpu().numpy(), -1e+12, 1e+12)
 
         if len(p) == 1:
             p = np.repeat(p[0], n_records)

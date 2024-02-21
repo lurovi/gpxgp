@@ -2,6 +2,12 @@
 dummyscripts/
 quicktest.py
 
+# simple exp scripts
+short_*.py
+short*.py
+simple_*.py
+simple*.py
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

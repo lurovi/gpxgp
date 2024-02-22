@@ -9,10 +9,10 @@ def compute_linear_scaling(y: np.ndarray, p: np.ndarray) -> tuple[float, float]:
 
 
 def linear_scale_predictions(p: np.ndarray, slope: float, intercept: float) -> np.ndarray:
-    slope: float = np.core.umath.clip(slope, -1e+10, 1e+10)
-    intercept: float = np.core.umath.clip(intercept, -1e+10, 1e+10)
-    p: np.ndarray = intercept + np.core.umath.clip(slope * p, -1e+10, 1e+10)
-    p = np.core.umath.clip(p, -1e+10, 1e+10)
+    slope: float = np.core.umath.clip(slope, -1e+50, 1e+50)
+    intercept: float = np.core.umath.clip(intercept, -1e+50, 1e+50)
+    p: np.ndarray = intercept + np.core.umath.clip(slope * p, -1e+50, 1e+50)
+    p = np.core.umath.clip(p, -1e+50, 1e+50)
     return p
 
 
@@ -28,11 +28,11 @@ def optionally_linear_scale_predictions(y: np.ndarray, p: np.ndarray, linear_sca
 
 def mean_squared_error(y: np.ndarray, p: np.ndarray, linear_scaling: bool = False, slope: float = None, intercept: float = None) -> float:
     p: np.ndarray = optionally_linear_scale_predictions(y=y, p=p, linear_scaling=linear_scaling, slope=slope, intercept=intercept)
-    diff: np.ndarray = np.core.umath.clip(p - y, -1e+20, 1e+20)
-    diff = np.core.umath.clip(np.square(diff), -1e+20, 1e+20)
+    diff: np.ndarray = np.core.umath.clip(p - y, -1e+50, 1e+50)
+    diff = np.core.umath.clip(np.square(diff), -1e+50, 1e+50)
     s: float = diff.sum()
-    if s > 1e+20:
-        s = 1e+20
+    if s > 1e+50:
+        s = 1e+50
     s = s / float(len(y))
     return s
 
@@ -41,3 +41,4 @@ def root_mean_squared_error(y: np.ndarray, p: np.ndarray, linear_scaling: bool =
     s: float = mean_squared_error(y=y, p=p, linear_scaling=linear_scaling, slope=slope, intercept=intercept)
     s = math.sqrt(s)
     return s
+

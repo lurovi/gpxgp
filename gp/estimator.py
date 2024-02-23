@@ -180,8 +180,8 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
         if self.linear_scaling:
             p: np.ndarray = self.__apply_program(X, n_records)
             curr_slope, curr_intercept = compute_linear_scaling(y.detach().cpu().numpy(), p)
-            self.slope_ = np.core.umath.clip(curr_slope, -1e+50, 1e+50)
-            self.intercept_ = np.core.umath.clip(curr_intercept, -1e+50, 1e+50)
+            self.slope_ = np.core.umath.clip(curr_slope, -1e+20, 1e+20)
+            self.intercept_ = np.core.umath.clip(curr_intercept, -1e+20, 1e+20)
 
         return self
 
@@ -209,9 +209,9 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
         with torch.no_grad():
             if self.mode == 'gp':
                 pg_eval: ProgramEvaluator = ProgramEvaluator(self.opcodes_)
-                p: np.ndarray = np.core.umath.clip(pg_eval(x_list, self.best_prg_).detach().cpu().numpy(), -1e+50, 1e+50)
+                p: np.ndarray = np.core.umath.clip(pg_eval(x_list, self.best_prg_).detach().cpu().numpy(), -1e+20, 1e+20)
             else:
-                p: np.ndarray = np.core.umath.clip(self.best_prg_(x_list).detach().cpu().numpy(), -1e+50, 1e+50)
+                p: np.ndarray = np.core.umath.clip(self.best_prg_(x_list).detach().cpu().numpy(), -1e+20, 1e+20)
 
         if len(p) == 1:
             p = np.repeat(p[0], n_records)

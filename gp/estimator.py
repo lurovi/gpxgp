@@ -160,26 +160,25 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
 
         solver = alg(self.opcodes_, gp_params)
 
-        X = torch.from_numpy(X)
-        y = torch.from_numpy(y)
-        x_train_list = [x_i for x_i in X.T]
-        y.requires_grad_()
+        X_t: torch.Tensor = torch.from_numpy(X)
+        y_t: torch.Tensor = torch.from_numpy(y)
+        x_train_list: list[torch.Tensor] = [x_i for x_i in X_t.T]
+        y_t.requires_grad_()
 
         if self.mode == 'gp':
-            train_fit_fun = make_fit_fun_gp(x_train_list, y, self.opcodes_, reduction='mean')
+            train_fit_fun = make_fit_fun_gp(x_train_list, y_t, self.opcodes_, reduction='mean')
         else:
-            train_fit_fun = make_fit_fun_gpgd(x_train_list, y, reduction='mean')
+            train_fit_fun = make_fit_fun_gpgd(x_train_list, y_t, reduction='mean')
 
-        curr_best_prg, curr_best_val = solver.fit(train_fit_fun, verbose=self.verbose, parallel=self.parallel)
+        curr_best_prg, _ = solver.fit(train_fit_fun, verbose=self.verbose, parallel=self.parallel)
         
         self.best_prg_: Any = curr_best_prg
-        self.best_val_: float = curr_best_val
         self.slope_: float = 1.0
         self.intercept_: float = 0.0
 
         if self.linear_scaling:
-            p: np.ndarray = self.__apply_program(X, n_records)
-            curr_slope, curr_intercept = compute_linear_scaling(y.detach().cpu().numpy(), p)
+            p: np.ndarray = self.__apply_program(X_t, n_records)
+            curr_slope, curr_intercept = compute_linear_scaling(y_t.detach().cpu().numpy(), p)
             self.slope_ = np.core.umath.clip(curr_slope, -1e+20, 1e+20)
             self.intercept_ = np.core.umath.clip(curr_intercept, -1e+20, 1e+20)
 
@@ -194,9 +193,9 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
             raise ValueError(f'The number of features of the fitted estimator is {self.n_features_in_}, but this dataset has {X.shape[1]} features instead.')
 
         n_records: int = X.shape[0]
-        X = torch.from_numpy(X)
+        X_t: torch.Tensor = torch.from_numpy(X)
         
-        return self.slope_ * self.__apply_program(X, n_records) + self.intercept_
+        return self.slope_ * self.__apply_program(X_t, n_records) + self.intercept_
         
 
     def fit_predict(self, X: np.ndarray, y: np.ndarray) -> np.ndarray:
@@ -205,7 +204,7 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
     
 
     def __apply_program(self, X: torch.Tensor, n_records: int) -> np.ndarray:
-        x_list = [x_i for x_i in X.T]
+        x_list: list[torch.Tensor] = [x_i for x_i in X.T]
         with torch.no_grad():
             if self.mode == 'gp':
                 pg_eval: ProgramEvaluator = ProgramEvaluator(self.opcodes_)

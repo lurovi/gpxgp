@@ -12,6 +12,7 @@ from gp.opgd.linear_opgd import LinearOPGD
 from utils.evaluations import compute_linear_scaling
 from utils.utils import set_seeds, make_fit_fun_gp, make_fit_fun_gpgd
 from gp.prog_eval import ProgramEvaluator
+from typing import Optional
 
 
 class ParametrizedGPGD(BaseEstimator, RegressorMixin):
@@ -33,7 +34,7 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
                  comp_budget: int = 100,
                  e_in_evo: int = 0,
                  e_after_evo: int = 0,
-                 seed: int | None = None,
+                 seed: Optional[int] = None,
                  verbose: bool = False,
                  parallel: bool = False
                  ) -> None:
@@ -58,7 +59,7 @@ class ParametrizedGPGD(BaseEstimator, RegressorMixin):
         self.epochs_in_evolution: int = e_in_evo
         self.epochs_after_evolution: int = e_after_evo
 
-        self.seed: int | None = seed
+        self.seed: Optional[int] = seed
         self.verbose: bool = verbose
         self.parallel: bool = parallel
 
